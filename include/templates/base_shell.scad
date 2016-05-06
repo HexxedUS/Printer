@@ -19,12 +19,26 @@ module BaseShellXSide(
     cube([10, 6, xyz[2]], center=true);
 };
 
+module BaseShellZSideDiff(
+  xyz=[$baseLength, $baseWidth, $baseHeight],
+  alt=false
+) if(!alt) for(y=[0:1]) mirror([0, y, 0])
+  translate([0, -xyz[1]/2+6+(3+nkern(1))/2, xyz[2]/2 -15+3/2])
+  cube([xyz[0]+1, 3+nkern(1), 3+nkern(2)], center=true);
+
 module BaseShellZSide(
   xyz=[$baseLength, $baseWidth, $baseHeight],
   alt=false
 ) mirror([0, 0, alt ? 1 : 0])
   translate([0, 0, xyz[2]/2 +(alt ? -5 : -10)])
   cube([xyz[0], xyz[1]-12-nkern(2), 10], center=true);
+
+module BaseShellYSideUnion(
+  xyz=[$baseLength, $baseWidth, $baseHeight],
+  alt=false
+) if(!alt) for(y=[0:1]) mirror([0, y, 0])
+  translate([0, -xyz[1]/2 +9/2, xyz[2]/2 -15+(3/2)])
+  cube([xyz[0]+1, 9, 3], center=true);
 
 module BaseShellYSide(
   xyz=[$baseLength, $baseWidth, $baseHeight],
@@ -35,7 +49,7 @@ module BaseShellYSide(
   hexagonX = 8,
   hexagonY = 8
 ) mirror([0, alt ? 1 : 0, 0])
-  translate([0, $chassisWidth/2-3, 0]) {
+  translate([0, xyz[1]/2-3, 0]) {
 
   difference() {
     cube([xyz[0], 6, xyz[2]], center = true);
@@ -45,6 +59,7 @@ module BaseShellYSide(
 
   translate([0, 0, (-xyz[2]/2) + 5]) cube([xyz[0], 6, 10], center=true);
   translate([0, 0, (xyz[2]/2) - (15/2)]) cube([xyz[0], 6, 15], center=true);
+  translate([0, -3/2, (xyz[2]/2) - 15 +(3/2)]) cube([xyz[0], 9, 3], center=true);
 };
 
 module BaseShellScrews(
@@ -64,12 +79,27 @@ module BaseShellScrews(
   translate([10+kern, 0, 0]) BaseShellScrew();
 };
 
+module BaseShellCableTrayDiff(
+  xyz=[$baseLength, $baseWidth, $baseHeight],
+  alt = false,
+) mirror([0, 0, alt ? 1 : 0])
+  for(y=[30, 0, -30])
+  translate([0, y, xyz[2]/2 +(alt ? -5 : -10)]) difference() {
+
+  union() {
+    cube([xyz[0]+1, 22, 4], center=true);
+    translate([0, 0, -5/2]) cube([xyz[0]+1, 2, 5], center=true);
+  };
+
+  for(y=[0:1]) mirror([0, y, 0]) translate([0, 2, -5/2]) cube([xyz[0]+1, 2, 4], center=true);
+};
 
 module BaseShellConnector(
   xyz=[$baseLength, $baseWidth, $baseHeight],
   altY = false,
   altX = false,
   cutout = false,
+  trans=[0, 0, 0],
   kern = $kern,
 ) mirror([0, altY ? 1 : 0, 0])
   mirror([altX ? 1 : 0, 0, 0])
@@ -78,7 +108,7 @@ module BaseShellConnector(
     xyz[0]/2,
     ((xyz[1]-12-nkern(2))/2)-(7/2),
     (xyz[2]/2) +(z>0 ? -5 : -10)
-  ]) cube([
+  ]+trans) cube([
     20 +kern,
     7 +(cutout ? 0 : -kern*2),
     10 +(cutout ? 0 : -kern*2)
@@ -96,12 +126,14 @@ module BaseShell(
   connectorFront = true,
   connectorBack = true,
   kern = $kern,
-  hexagonX = 8,
-  hexagonY = 8,
+  trans = [0, 0, 0],
+  cableTracks=false,
+  hexagonX = 10,
+  hexagonY = 10,
   hexagonSize = 14,
   hexagonSpacing = undef,
   hexagonOffset = [0, 0] // X&Z-Axis
-) union() {
+) translate(trans) union() {
   difference() {
     group() {
       if(bottom) BaseShellZSide(xyz, true); // Z-
@@ -132,8 +164,15 @@ module BaseShell(
       );
 
       // First Group
-      children(0);
+      if($children > 0) children(0);
     };
+
+    if(top) BaseShellZSideDiff(xyz, false);
+
+    if(top && cableTracks)
+      BaseShellCableTrayDiff(xyz, false);
+    if(bottom && cableTracks)
+      BaseShellCableTrayDiff(xyz, true);
 
     // Connectors
     if(connectorFront) BaseShellConnector(
@@ -160,9 +199,12 @@ module BaseShell(
     };
 
     // Second Group
-    children(1);
+    if($children > 1) children(1);
   };
 
+  if(right) BaseShellYSideUnion(xyz, false);
+  if(left) BaseShellYSideUnion(xyz, true);
+
   // Third Group
-  children(2);
+  if($children > 2) children(2);
 };

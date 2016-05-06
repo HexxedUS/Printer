@@ -14,7 +14,7 @@ module StepperMotorHoles(
 };
 
 module StepperMotor(
-  fn = $fn,
+  fn = 24,
   kern = $kern,
   center = false,
   height = 5,
