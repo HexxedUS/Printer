@@ -4,9 +4,8 @@ include <../include/patterns/hexagon.scad>;
 include <../include/templates/base_shell.scad>;
 include <../include/mounts/extrudrboard.scad>;
 include <../include/mounts/printrboard.scad>;
-//include <../include/parts/linear_bearing.scad>;
 include <../include/parts/stepper_motor.scad>;
-//include <../lib/AcmeScrew/PrintrbotLeadScrew.scad>;
+include <../include/parts/logo.scad>;
 
 $baseWidth = 125 + nkern(2);
 $baseLength = 336 + nkern(6);
@@ -25,41 +24,26 @@ $fnCircle = 24;
 
 $BS1Length=71;
 
-module BaseSection1() BaseShell(
-  [$BS1Length, $baseWidth, $BS5Height],
-  connectorFront=true,
-  connectorBack=true,
-  cableTracks=true
-);
-
-$BS2Length=71;
-
-module BaseSection2() BaseShell(
-  [$BS2Length, $baseWidth, $BS5Height],
-  connectorFront=true,
-  connectorBack=true,
-  cableTracks=true
-);
-
-$BS3Length=71;
-
-module BaseSection3() BaseShell(
-  [$BS3Length, $baseWidth, $BS5Height],
-  connectorFront=true,
-  connectorBack=true,
-  cableTracks=true
-);
-
-$BS4Length=20;
-$BS4Height=$baseHeight;
-
-module BaseSection4() BaseShell(
-  [$BS4Length, $baseWidth, $BS5Height],
+module BaseSection1() union() BaseShell(
+  [$BS1Length, $baseWidth, $baseHeight],
   connectorFront=true,
   connectorBack=true,
   cableTracks=true
 ) {
 
+};
+
+module BaseSection2() BaseSection1();
+module BaseSection3() BaseSection1();
+
+$BS4Length=20;
+
+module BaseSection4() union() BaseShell(
+  [$BS4Length, $baseWidth, $baseHeight],
+  connectorFront=true,
+  connectorBack=true,
+  cableTracks=true
+) {
   // Group
   for(y=[0:1]) mirror([0, y, 0]) {
     translate([0, $baseWidth/2-20, -$baseHeight/2])
@@ -89,7 +73,7 @@ module BaseSection4() BaseShell(
 $BS5Length=71;
 $BS5Height=$baseHeight;
 
-module BaseSection5() BaseShell(
+module BaseSection5() union() BaseShell(
   [$BS5Length, $baseWidth, $BS5Height],
   connectorFront=true,
   connectorBack=true,
@@ -99,6 +83,10 @@ module BaseSection5() BaseShell(
     // Z-Axis LeadScrew Motor
     translate([0, 0, $baseHeight/2-23/2-5])
       cube([42, 42, 23], center=true);
+
+    // TEMP
+    /*translate([0, 0, $baseHeight/2-5])
+      cube([42, 42, 3], center = true);*/
 
     // IEC Cable Connector
     translate([0, $baseWidth/2 - 6/2, -2.5])
@@ -111,6 +99,15 @@ module BaseSection5() BaseShell(
     translate([0, 0, $baseHeight/2-23-5])
       StepperMotor(height=23, center=true, cutout=true, screws=true);
 
+    // Z-Axis LeadScrewMount Cover
+    translate([0, 0, $baseHeight/2-5-3])
+      cube([42, 82, 8], center = true);
+    translate([0, 0, $baseHeight/2-6.5])
+      cube([42, 94, 3], center = true);
+    // Z-Axis LeadScrewMount Cover Screw Holes...
+    for(x=[0:1], y=[0:1]) mirror([x, 0, 0]) mirror([0, y, 0])
+      translate([(42/2)-5, (94/2)-(12/4), ($baseHeight/2)-5-7]) cylinder(10, d=3);
+
     // IEC Cable Connector
     translate([0, $baseWidth/2 - 6/2, -2.5])
       cube([27 + ($kern * 2), 10, 47 + ($kern * 2)], center = true);
@@ -118,18 +115,29 @@ module BaseSection5() BaseShell(
       translate([-20, $baseWidth/2 + 1, -2.5])
       rotate([90, 0, 0]) cylinder(8, d=3);
   };
-  group() {};
+  group() {
+    // Z-Axis LeadScrewMount Cover
+    difference() {
+      translate([0, 0, $baseHeight/2-5-(3-nkern(1)/2)])
+        cube([42-nkern(2), 94-nkern(2), 3-nkern(1)], center = true);
+
+      for(x=[0:1], y=[0:1]) mirror([x, 0, 0]) mirror([0, y, 0])
+        translate([(42/2)-5, (94/2)-(12/4), ($baseHeight/2)-5-7]) cylinder(10, d=3);
+      translate([0, 0, ($baseHeight/2)-5-7]) cylinder(10, d=20, $fn=$fnCircle);
+      translate([42/2-5/2, 0, ($baseHeight/2)-7]) cube([5, 10, 4], center = true);
+    };
+  };
 };
 
 
 $BS6Length=$BS4Length;
 
-module BaseSection6() BaseSection4();
+module BaseSection6() union() BaseSection4();
 
 $BS7Length=71;
 $BS7Height=$baseHeight;
 
-module BaseSection7() BaseShell(
+module BaseSection7() union() BaseShell(
   [$BS7Length, $baseWidth, $BS7Height],
   connectorFront=false,
   connectorBack=true,
@@ -154,9 +162,6 @@ module Base(
   ZAxis=true,
   Electronics=true,
 ) {
-  //translate([0, 0, 0])
-  //translate([0, 0, 0])
-
   if(Electronics) {
     translate([
       +$BS5Length/2
@@ -217,4 +222,4 @@ module Base(
 };
 
 //translate([0, 0, 100]) import("../Chassis/Chassis.stl");
-Base(PowerSupply=true);
+Base(PowerSupply=false, Electronics=false);
