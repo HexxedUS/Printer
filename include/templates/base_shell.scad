@@ -11,12 +11,12 @@ module BaseShellScrew(head=true) render() color("green") rotate([90, 0, 0]) {
 module BaseShellXSide(
   xyz=[$baseLength, $baseWidth, $baseHeight],
   alt=false
-) render() mirror([alt ? 1 : 0, 0, 0])
-  translate([-xyz[0]/2 - (10/2), 0, 0]) {
-
-  cube([10, xyz[1]-12-nkern(2), xyz[2]], center=true);
-  for(y=[0:1]) mirror([0, y, 0]) translate([0, xyz[1]/2 - 3, 0])
-    cube([10, 6, xyz[2]], center=true);
+) render() mirror([alt ? 1 : 0, 0, 0]) {
+  translate([-xyz[0]/2 - 5 - nkern(1), 0, 0])
+    cube([10, xyz[1]-12-nkern(2), xyz[2]], center=true);
+  for(y=[0:1]) mirror([0, y, 0])
+    translate([-xyz[0]/2 - (10+nkern(1))/2, xyz[1]/2 - 3, 0])
+    cube([10+nkern(1), 6, xyz[2]], center=true);
 };
 
 module BaseShellZSideDiff(
@@ -72,7 +72,7 @@ module BaseShellScrews(
   kern = $kern
 ) render() mirror([0, alt ? 1 : 0, 0])
   for(z=[0:1], x=[0:1]) mirror([x, 0, 0]) mirror([0, 0, z])
-  translate([front && x == 1 || back && x == 0 ? +5 : -5, 0, 0])
+  translate([front && x == 1 || back && x == 0 ? +5+nkern(0.5) : -5-nkern(0.5), 0, 0])
   translate([xyz[0]/2, xyz[1]/2, xyz[2]/2 +(z > 0 ? -5 : -10)]) {
 
   BaseShellScrew();

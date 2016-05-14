@@ -5,7 +5,7 @@ module ResetButton(cutout = false) render() {
 
 module ResetButtonBottom() render() difference() {
   union() {
-    translate([0, 5, 5/2]) cube([10, 10, 5], center=true);
+    translate([-5, 0, 5/2]) cube([10, 10, 5], center=true);
     cylinder(35, d1=10, d2=8-($kern * 2), $fn=$fnCircle);
   };
 

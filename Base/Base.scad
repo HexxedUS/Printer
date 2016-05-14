@@ -156,13 +156,13 @@ module BaseSection7() union() BaseShell(
   };
   group() {
     // Hexagon Pattern (on back)
-    translate([$BS7Length/2+5, 0, 5]) intersection() {
+    translate([$BS7Length/2+5+nkern(1), 0, 5]) intersection() {
       translate([-6.75, 0, 0]) rotate([90, 0, 90]) HexagonPattern(13, 13, 13);
       cube([10, $baseWidth-12-nkern(2), $BS7Height-40], center=true);
     };
 
     // USB/SD Slot Cutout
-    translate([$BS7Length/2+6, 0, -$BS7Height/2+15])
+    translate([$BS7Length/2+6+nkern(1), 0, -$BS7Height/2+15])
       cube([9, $baseWidth-12-nkern(2), 10], center=true);
     translate([$BS7Length/2, 50, -$BS7Height/2+12]) {
       translate([0, -21, 0]) cube([8, 14, 4]);
@@ -183,16 +183,16 @@ module BaseSection7() union() BaseShell(
   };
   group() {
     // Rear Text
-    translate([$BS7Length/2+6, 0, -$BS7Height/2+12+nkern(1)]) {
-      translate([0, -20, 0]) rotate([90, 0, 90]) scale([0.1, 0.1, 1]) OpenDyslexicRegular("USB", center=true, height=8);
-      translate([0, 20, 0]) rotate([90, 0, 90]) scale([0.1, 0.1, 1]) OpenDyslexicRegular("SD", center=true, height=8);
+    translate([$BS7Length/2+4+nkern(1), 0, -$BS7Height/2+12+nkern(1)]) render() {
+      translate([0, -20, 0]) rotate([90, 0, 90]) scale([0.1, 0.1, 1]) OpenDyslexicRegular("USB", center=true, height=5);
+      translate([0, 20, 0]) rotate([90, 0, 90]) scale([0.1, 0.1, 1]) OpenDyslexicRegular("SD", center=true, height=5);
     };
 
     // Reset button
     translate([
       $BS7Length/2-10,
       $baseWidth/2-6-nkern(1)-10,
-      -10+nkern(1)
+      -10+nkern(2)
     ]) ResetButton(false);
   };
 };
