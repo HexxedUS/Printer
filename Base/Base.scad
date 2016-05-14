@@ -5,6 +5,7 @@ include <../include/templates/base_shell.scad>;
 include <../include/mounts/extrudrboard.scad>;
 include <../include/mounts/printrboard.scad>;
 include <../include/parts/stepper_motor.scad>;
+include <../include/parts/reset_button.scad>;
 include <../include/parts/logo.scad>;
 
 $baseWidth = 125 + nkern(2);
@@ -118,7 +119,7 @@ module BaseSection5() union() BaseShell(
   group() {
     // Z-Axis LeadScrewMount Cover
     difference() {
-      translate([0, 0, $baseHeight/2-5-(3-nkern(1)/2)])
+      translate([0, 0, $baseHeight/2-5-((3-nkern(1))/2)])
         cube([42-nkern(2), 94-nkern(2), 3-nkern(1)], center = true);
 
       for(x=[0:1], y=[0:1]) mirror([x, 0, 0]) mirror([0, y, 0])
@@ -150,11 +151,50 @@ module BaseSection7() union() BaseShell(
     translate([0, 0, -$BS7Height/2+4.5])
       PrintrboardMount(baseHeight=4, height=8);
     translate([0, -100/2+40/2, $BS7Height/2-9.5])
-      rotate([0, 180, 090])
+      rotate([0, 180, 90])
       ExtrudrboardMount(baseHeight=4, height=8);
   };
-  group() {};
-  group() {};
+  group() {
+    // Hexagon Pattern (on back)
+    translate([$BS7Length/2+5, 0, 5]) intersection() {
+      translate([-6.75, 0, 0]) rotate([90, 0, 90]) HexagonPattern(13, 13, 13);
+      cube([10, $baseWidth-12-nkern(2), $BS7Height-40], center=true);
+    };
+
+    // USB/SD Slot Cutout
+    translate([$BS7Length/2+6, 0, -$BS7Height/2+15])
+      cube([9, $baseWidth-12-nkern(2), 10], center=true);
+    translate([$BS7Length/2, 50, -$BS7Height/2+12]) {
+      translate([0, -21, 0]) cube([8, 14, 4]);
+      translate([0, -92, 0]) cube([8, 10, 6]);
+    };
+
+    // Bootloader Switch
+    translate([$BS7Length/2-12.5, 15, $BS7Height/2-15])
+      for(y=[0:1]) mirror([0, y, 0]) translate([0, 5, 0])
+      cylinder(8, d=2, $fn=$fnHex);
+
+    // Reset button Hole
+    translate([
+      $BS7Length/2-10,
+      $baseWidth/2-6-nkern(1)-10,
+      -10+nkern(1)
+    ]) ResetButton(true);
+  };
+  group() {
+    // Rear Text
+    translate([$BS7Length/2+6, 0, -$BS7Height/2+12+nkern(1)]) {
+      translate([0, -20, 0]) rotate([90, 0, 90]) scale([0.1, 0.1, 1]) OpenDyslexicRegular("USB", center=true, height=8);
+      translate([0, 20, 0]) rotate([90, 0, 90]) scale([0.1, 0.1, 1]) OpenDyslexicRegular("SD", center=true, height=8);
+    };
+
+    // Reset button
+    translate([
+      $BS7Length/2-10,
+      $baseWidth/2-6-nkern(1)-10,
+      -10+nkern(1)
+    ]) ResetButton(false);
+  };
 };
 
 module Base(
@@ -222,4 +262,4 @@ module Base(
 };
 
 //translate([0, 0, 100]) import("../Chassis/Chassis.stl");
-Base(PowerSupply=false, Electronics=false);
+Base(PowerSupply=false, ZAxis=false, Electronics=true);

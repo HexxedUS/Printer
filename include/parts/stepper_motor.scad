@@ -5,7 +5,7 @@ module StepperMotorHoles(
   height = 5,
   cutout=false,
   screws=false
-) translate([0, 0, -0.5]) {
+) render() translate([0, 0, -0.5]) {
   translate([21, 21, 0]) cylinder(height + 1, d=24+kern, $fn=fn);
   for(x=[5.5, 42 - 5.5], y=[5.5, 42 - 5.5]) {
     translate([x, y, 0]) cylinder(height + 1, d=3, $fn=6);
@@ -20,7 +20,7 @@ module StepperMotor(
   height = 5,
   cutout=false,
   screws=false
-) translate([center ? -21 : 0, center ? - 21 : 0, 0]) {
+) render() translate([center ? -21 : 0, center ? - 21 : 0, 0]) {
   if(cutout) {
     StepperMotorHoles(fn, kern, center, height, cutout, screws);
   };

@@ -12,7 +12,7 @@ module HexagonPattern(
   x=0, y=0, z=6,
   d=8, s=undef,
   fn=$fnHex
-) {
+) render() {
   s = s == undef ? d * 1/8 : s;
 
   translate([-HexagonX(x, d, s), 0, 0]) for(x=[0:abs(x)], y=[0:abs(y)]) translate([
