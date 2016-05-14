@@ -261,5 +261,5 @@ module Base(
   };
 };
 
-//translate([0, 0, 100]) import("../Chassis/Chassis.stl");
-Base(PowerSupply=false, ZAxis=false, Electronics=true);
+translate([0, 0, 100]) import("../Chassis/Chassis.stl");
+Base(PowerSupply=true, ZAxis=true, Electronics=true);
