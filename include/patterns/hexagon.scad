@@ -45,3 +45,9 @@ module HexagonBloom(
       : [HexagonX(row, d, s), HexagonY(row, d, s), 0]
     ) rotate([0, 0, angle[0]]) Hexagon(z=h, d=d, fn=fn);
 }
+
+// @TODO: consider using for hexagon walls.
+/*module HexagonWall() render() translate([$BS7Length/2+4, 0, 5]) intersection() {
+  translate([-6.75, 0, 0]) rotate([90, 0, 90]) HexagonPattern(13, 13, 15);
+  cube([12, $baseWidth-12-nkern(2), $BS7Height-40], center=true);
+};*/

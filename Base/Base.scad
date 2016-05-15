@@ -145,7 +145,8 @@ module BaseSection7() union() BaseShell(
   cableTracks=true,
   back=true,
   top=true,
-  right=true
+  right=true,
+  left=true
 ) {
   group() {
     translate([0, 0, -$BS7Height/2+4.5])
@@ -156,9 +157,9 @@ module BaseSection7() union() BaseShell(
   };
   group() {
     // Hexagon Pattern (on back)
-    translate([$BS7Length/2+5+nkern(1), 0, 5]) intersection() {
-      translate([-6.75, 0, 0]) rotate([90, 0, 90]) HexagonPattern(13, 13, 13);
-      cube([10, $baseWidth-12-nkern(2), $BS7Height-40], center=true);
+    translate([$BS7Length/2+6, 0, 5]) intersection() {
+      translate([-6.75, 0, 0]) rotate([90, 0, 90]) HexagonPattern(13, 13, 12);
+      #cube([12, $baseWidth-12-nkern(2), $BS7Height-40], center=true);
     };
 
     // USB/SD Slot Cutout
@@ -183,7 +184,7 @@ module BaseSection7() union() BaseShell(
   };
   group() {
     // Rear Text
-    translate([$BS7Length/2+4+nkern(1), 0, -$BS7Height/2+12+nkern(1)]) render() {
+    translate([$BS7Length/2+3+nkern(1), 0, -$BS7Height/2+12+nkern(1)]) render() {
       translate([0, -20, 0]) rotate([90, 0, 90]) scale([0.1, 0.1, 1]) OpenDyslexicRegular("USB", center=true, height=5);
       translate([0, 20, 0]) rotate([90, 0, 90]) scale([0.1, 0.1, 1]) OpenDyslexicRegular("SD", center=true, height=5);
     };
@@ -261,5 +262,5 @@ module Base(
   };
 };
 
-translate([0, 0, 100]) import("../Chassis/Chassis.stl");
-Base(PowerSupply=true, ZAxis=true, Electronics=true);
+//translate([0, 0, 100]) import("../Chassis/Chassis.stl");
+Base(PowerSupply=false, ZAxis=false, Electronics=true);
