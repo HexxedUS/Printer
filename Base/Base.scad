@@ -23,19 +23,79 @@ $leadScrewTorque = Inch2MM(1/16);
 $fnHex = 6;
 $fnCircle = 24;
 
-$BS1Length=71;
+$BS1Length=(225+nkern(2))/3;
 
 module BaseSection1() union() BaseShell(
   [$BS1Length, $baseWidth, $baseHeight],
   connectorFront=true,
-  connectorBack=true,
-  cableTracks=true
+  connectorBack=false,
+  cableTracksTop=true,
+  front=true
 ) {
-
+  group(){};
+  translate([-5+$BS1Length, 0, -$baseHeight/2]) {
+    color("green") for(v=[
+      [-97.5, 47.5, 0],
+      [-97.5, -47.5, 0]
+    ]) translate(v) {
+      cylinder(10, d=3, $fn=$fnHex);
+      cylinder(3.5, d=5.5, $fn=$fnCircle);
+    };
+  };
 };
 
-module BaseSection2() BaseSection1();
-module BaseSection3() BaseSection1();
+$BS2Length=$BS1Length;
+
+module BaseSection2() BaseShell(
+  [$BS2Length, $baseWidth, $baseHeight],
+  connectorFront=true,
+  connectorBack=true,
+  cableTracksTop=true
+) {
+  translate([-5, 0, -$baseHeight/2+50/2+10+nkern(1)]) color("red")
+    cube([215, 115, 50], center=true);
+
+  group() {
+    #translate([0, 0, $baseHeight/2]) color("yellow")
+      cube([46+25, 42+nkern(1), 42+nkern(1)], center=true);
+
+    translate([-5, 0, -$baseHeight/2]) {
+      color("green") for(v=[
+        [-10.5, -7.5, 0]
+      ]) translate(v) {
+        cylinder(10, d=3, $fn=$fnHex);
+        cylinder(3.5, d=5.5, $fn=$fnCircle);
+      };
+    };
+  };
+};
+
+$BS3Length=$BS1Length;
+
+module BaseSection3() BaseShell(
+  [$BS3Length, $baseWidth, $baseHeight],
+  connectorFront=true,
+  connectorBack=true,
+  cableTracksTop=true
+) {
+  group(){};
+  group(){
+    translate([
+      $BS3Length/2-10/2, 0,
+      -$baseHeight/2+7-nkern(0.5)
+    ]) cube([10, 82, 7], center=true);
+
+    translate([-5-$BS3Length, 0, -$baseHeight/2]) {
+      color("green") for(v=[
+        [79.5, 47.5, 0],
+        [79.5, -47.5, 0]
+      ]) translate(v) {
+        cylinder(10, d=3, $fn=$fnHex);
+        cylinder(3.5, d=5.5, $fn=$fnCircle);
+      };
+    };
+  };
+};
 
 $BS4Length=20;
 
@@ -43,7 +103,8 @@ module BaseSection4() union() BaseShell(
   [$BS4Length, $baseWidth, $baseHeight],
   connectorFront=true,
   connectorBack=true,
-  cableTracks=true
+  cableTracksTop=true,
+  cableTracksBottom=true
 ) {
   // Group
   for(y=[0:1]) mirror([0, y, 0]) {
@@ -78,7 +139,8 @@ module BaseSection5() union() BaseShell(
   [$BS5Length, $baseWidth, $BS5Height],
   connectorFront=true,
   connectorBack=true,
-  cableTracks=true
+  cableTracksTop=true,
+  cableTracksBottom=true
 ) {
   group() {
     // Z-Axis LeadScrew Motor
@@ -142,7 +204,8 @@ module BaseSection7() union() BaseShell(
   [$BS7Length, $baseWidth, $BS7Height],
   connectorFront=false,
   connectorBack=true,
-  cableTracks=true,
+  cableTracksTop=true,
+  cableTracksBottom=true,
   back=true,
   top=true,
   right=true,
@@ -233,7 +296,7 @@ module Base(
   };
 
   if(PowerSupply) {
-    translate([
+    !translate([
       -$BS5Length/2
       -$BS4Length
       -$BS3Length/2
@@ -263,4 +326,4 @@ module Base(
 };
 
 //translate([0, 0, 100]) import("../Chassis/Chassis.stl");
-Base(PowerSupply=false, ZAxis=false, Electronics=true);
+Base(PowerSupply=true, ZAxis=false, Electronics=false);

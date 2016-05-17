@@ -129,7 +129,8 @@ module BaseShell(
   connectorBack = true,
   kern = $kern,
   trans = [0, 0, 0],
-  cableTracks=false,
+  cableTracksTop=false,
+  cableTracksBottom=false,
   hexagonX = 10,
   hexagonY = 10,
   hexagonSize = 14,
@@ -171,9 +172,9 @@ module BaseShell(
 
     if(top) BaseShellZSideDiff(xyz, false);
 
-    if(top && cableTracks)
+    if(top && cableTracksTop)
       BaseShellCableTrayDiff(xyz, false);
-    if(bottom && cableTracks)
+    if(bottom && cableTracksBottom)
       BaseShellCableTrayDiff(xyz, true);
 
     // Connectors
