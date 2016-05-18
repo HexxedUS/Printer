@@ -4,6 +4,7 @@ include <../include/patterns/hexagon.scad>;
 include <../include/templates/base_shell.scad>;
 include <../include/mounts/extrudrboard.scad>;
 include <../include/mounts/printrboard.scad>;
+include <../include/mounts/xaxis_motor.scad>;
 include <../include/parts/stepper_motor.scad>;
 include <../include/parts/reset_button.scad>;
 include <../include/parts/logo.scad>;
@@ -52,13 +53,16 @@ module BaseSection2() BaseShell(
   connectorBack=true,
   cableTracksTop=true
 ) {
-  translate([-5, 0, -$baseHeight/2+50/2+10+nkern(1)]) color("red")
-    cube([215, 115, 50], center=true);
+  group() {
+    /*translate([-5, 0, -$baseHeight/2+50/2+10+nkern(1)]) color("red")
+      cube([215, 115, 50], center=true);*/
+
+    translate([$BS2Length/2-(46+nkern(1))/2, 0, $baseHeight/2-2]) cube([
+      46+nkern(1), 57, 42+nkern(1)
+    ], center=true);
+  };
 
   group() {
-    #translate([0, 0, $baseHeight/2]) color("yellow")
-      cube([46+25, 42+nkern(1), 42+nkern(1)], center=true);
-
     translate([-5, 0, -$baseHeight/2]) {
       color("green") for(v=[
         [-10.5, -7.5, 0]
@@ -67,6 +71,24 @@ module BaseSection2() BaseShell(
         cylinder(3.5, d=5.5, $fn=$fnCircle);
       };
     };
+
+    translate([0, 0, $baseHeight/2-2]) cube([
+      $BS2Length+1, 42+nkern(1), 42+nkern(1)
+    ], center=true);
+  };
+
+  group() {
+    difference() {
+      translate([$BS2Length/2-(46+nkern(1))/2, 0, $baseHeight/2-2]) cube([
+        46+nkern(1), 57, 42+nkern(1)
+      ], center=true);
+
+      translate([0, 0, $baseHeight/2-2]) cube([
+        $BS2Length+1, 42+nkern(1), 42+nkern(1)
+      ], center=true);
+    };
+
+    XAxisMotor();
   };
 };
 
@@ -296,7 +318,7 @@ module Base(
   };
 
   if(PowerSupply) {
-    !translate([
+    translate([
       -$BS5Length/2
       -$BS4Length
       -$BS3Length/2
@@ -304,7 +326,7 @@ module Base(
       0, 0
     ]) BaseSection3();
 
-    translate([
+    !translate([
       -$BS5Length/2
       -$BS4Length
       -$BS3Length
