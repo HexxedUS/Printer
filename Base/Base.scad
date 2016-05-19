@@ -34,15 +34,23 @@ module BaseSection1() union() BaseShell(
   front=true
 ) {
   group(){};
-  translate([-5+$BS1Length, 0, -$baseHeight/2]) {
-    color("green") for(v=[
-      [-97.5, 47.5, 0],
-      [-97.5, -47.5, 0]
-    ]) translate(v) {
-      cylinder(10, d=3, $fn=$fnHex);
-      cylinder(3.5, d=5.5, $fn=$fnCircle);
+  group() {
+    // Front Logo Diff
+    translate([-$BS1Length/2-7.25, 0, -5/2])
+      cube([7, $baseWidth-12-nkern(2)-8, $baseHeight-25], center=true);
+
+    // Bottom Screw Holes
+    translate([-5+$BS1Length, 0, -$baseHeight/2]) {
+      color("green") for(v=[
+        [-97.5, 47.5, 0],
+        [-97.5, -47.5, 0]
+      ]) translate(v) {
+        cylinder(10, d=3, $fn=$fnHex);
+        cylinder(3.5, d=5.5, $fn=$fnCircle);
+      };
     };
   };
+  translate([-$BS1Length/2-3, 0, -5/2]) Logo();
 };
 
 $BS2Length=$BS1Length;
@@ -326,7 +334,7 @@ module Base(
       0, 0
     ]) BaseSection3();
 
-    !translate([
+    translate([
       -$BS5Length/2
       -$BS4Length
       -$BS3Length
@@ -335,7 +343,7 @@ module Base(
       0, 0
     ]) BaseSection2();
 
-    translate([
+    !translate([
       -$BS5Length/2
       -$BS4Length
       -$BS3Length
